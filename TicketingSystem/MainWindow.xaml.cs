@@ -7,18 +7,24 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Start;
 
 namespace TicketingSystem
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private Start.Start _start;
+
         public MainWindow()
         {
             InitializeComponent();
+            _start = new Start.Start();
+        }
+
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await _start.ConnectionAsync();
         }
     }
 }
+
