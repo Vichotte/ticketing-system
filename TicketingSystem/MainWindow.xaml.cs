@@ -25,6 +25,30 @@ namespace TicketingSystem
         {
             await _start.ConnectionAsync();
         }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            
+            string us_text = user_text.Text;
+            string pa_text = password_text.Password;
+
+            bool ok = await _start.ValidateLogin(us_text, pa_text);
+
+            if (!ok)
+            {
+                MessageBox.Show("Credenciales incorrectas.");
+                return;
+            }
+
+            MessageBox.Show("Login correcto.");
+
+            /*
+            bool ok = BCrypt.Net.BCrypt.Verify("K2ehmCuxMgvPWm8", "$2a$12$7A1AiVdfKBk8bBfwKXCpqu2STGmIS4HEmRmCVlj1bOReup13sVA0C");
+            MessageBox.Show(ok ? "Coincide" : "No coincide");
+            */
+
+        }
+
     }
 }
 

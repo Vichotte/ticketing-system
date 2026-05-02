@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using MySqlConnector;
+using BCrypt.Net;
 
 namespace Start
 {
@@ -30,86 +31,184 @@ namespace Start
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning
                 );
+                Application.Current.Shutdown();
                 return;
             }
 
-            // 4) Construir connection string de forma segura
+            // 4) Construir connection string base (sin DB)
             var csb = new MySqlConnectionStringBuilder
             {
                 Server = host,
-                Database = database,
                 UserID = user,
                 Password = password,
                 Pooling = true,
-                ConnectionTimeout = 15
+                ConnectionTimeout = 15,
+                SslMode = sslModeEnv?.Equals("Required", StringComparison.OrdinalIgnoreCase) == true
+                    ? MySqlSslMode.Required
+                    : MySqlSslMode.None
             };
-
-            csb.SslMode = sslModeEnv.Equals("Required", StringComparison.OrdinalIgnoreCase)
-                ? MySqlSslMode.Required
-                : MySqlSslMode.None;
-
-            string connectionString = csb.ConnectionString;
-
-            // 5) Intentar conectar
-            using var connection = new MySqlConnection(connectionString);
 
             try
             {
-                await connection.OpenAsync();
-                MessageBox.Show("Conexión exitosa a MySQL.", "Conexión", MessageBoxButton.OK, MessageBoxImage.Information);
+                // 5) Conexión sin base de datos (para crearla si no existe)
+                using (var conn = new MySqlConnection(csb.ConnectionString))
+                {
+                    await conn.OpenAsync();
+
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS `{database}`;";
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                // 6) Conexión ya con la base de datos seleccionada
+                csb.Database = database;
+
+                using (var conn = new MySqlConnection(csb.ConnectionString))
+                {
+                    await conn.OpenAsync();
+
+                    // 7) Ejecutar procedimientos de creación de tablas
+                    await ExecuteProcedure(conn, "create_tb_roles");
+                    await ExecuteProcedure(conn, "create_tb_departments");
+                    await ExecuteProcedure(conn, "create_tb_users");
+
+                    // 8) Crear admin si no existe
+                    await ExecuteProcedure(conn, "create_admin");
+                }
+
+                MessageBox.Show("Base de datos lista y conexión exitosa.", "Conexión", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al conectar: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Error al inicializar la base de datos:\n" + ex.Message,
+                    "Error de conexión",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+                Application.Current.Shutdown();
             }
         }
 
-        // Helper: carga un .env simple (KEY=VALUE) en Environment si existe
-        private void TryLoadDotEnv()
+        public async Task<bool> ValidateLogin(string username, string password)
         {
             try
             {
-                string exeDir = AppDomain.CurrentDomain.BaseDirectory;
-                string envPath = Path.Combine(exeDir, ".env");
+                string host = Environment.GetEnvironmentVariable("DB_HOST");
+                string database = Environment.GetEnvironmentVariable("DB_NAME");
+                string user = Environment.GetEnvironmentVariable("DB_USER");
+                string pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
-                if (!File.Exists(envPath))
+                var csb = new MySqlConnectionStringBuilder
                 {
-                    // También buscar en la carpeta del proyecto (útil en desarrollo)
-                    string projectEnv = Path.Combine(Directory.GetCurrentDirectory(), ".env");
-                    if (File.Exists(projectEnv)) envPath = projectEnv;
-                    else return;
+                    Server = host,
+                    Database = database,
+                    UserID = user,
+                    Password = pass,
+                    SslMode = MySqlSslMode.None
+                };
+
+                using var conn = new MySqlConnection(csb.ConnectionString);
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandText = "validate_admin_login";
+                cmd.Parameters.AddWithValue("@p_username", username);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                string storedHash = null;
+                if (await reader.ReadAsync())
+                {
+                    int ordinal = reader.GetOrdinal("password_hash");
+                    storedHash = reader.GetString(ordinal);
+                    
                 }
 
-                foreach (var rawLine in File.ReadAllLines(envPath))
-                {
-                    string line = rawLine.Trim();
-                    if (string.IsNullOrEmpty(line)) continue;
-                    if (line.StartsWith("#")) continue; // comentario
+                if (string.IsNullOrEmpty(storedHash))
+                    return false; // usuario no existe
 
-                    int idx = line.IndexOf('=');
-                    if (idx <= 0) continue;
-
-                    string key = line.Substring(0, idx).Trim();
-                    string val = line.Substring(idx + 1).Trim();
-
-                    // Quitar comillas si las hay
-                    if ((val.StartsWith("\"") && val.EndsWith("\"")) || (val.StartsWith("'") && val.EndsWith("'")))
-                    {
-                        val = val.Substring(1, val.Length - 2);
-                    }
-
-                    // Solo establecer si no existe ya en el entorno (evita sobrescribir variables del sistema)
-                    if (Environment.GetEnvironmentVariable(key) == null)
-                    {
-                        Environment.SetEnvironmentVariable(key, val);
-                    }
-                }
+                return BCrypt.Net.BCrypt.Verify(password, storedHash);
             }
-            catch
+            catch (Exception ex)
             {
-                // No hacemos nada si falla la carga; la app seguirá y mostrará mensaje si faltan variables.
+                MessageBox.Show("Error en login: " + ex.Message);
+                return false;
             }
         }
+
+
+
+        private async Task ExecuteProcedure(MySqlConnection conn, string procedureName)
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $"CALL {procedureName}();";
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        private void TryLoadDotEnv()
+{
+    try
+    {
+        string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+        string envPath = Path.Combine(exeDir, ".env");
+
+        if (!File.Exists(envPath))
+        {
+            string projectEnv = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+            if (File.Exists(projectEnv)) envPath = projectEnv;
+            else
+            {
+                MessageBox.Show("No se encontró el archivo .env en el directorio de ejecución ni en el proyecto.");
+                return;
+            }
+        }
+
+        foreach (var rawLine in File.ReadAllLines(envPath))
+        {
+            string line = rawLine.Trim();
+            if (string.IsNullOrEmpty(line)) continue;
+            if (line.StartsWith("#")) continue;
+
+            int idx = line.IndexOf('=');
+            if (idx <= 0) continue;
+
+            string key = line.Substring(0, idx).Trim();
+            string val = line.Substring(idx + 1).Trim();
+
+            if ((val.StartsWith("\"") && val.EndsWith("\"")) || (val.StartsWith("'") && val.EndsWith("'")))
+            {
+                val = val.Substring(1, val.Length - 2);
+            }
+
+            if (Environment.GetEnvironmentVariable(key) == null)
+            {
+                Environment.SetEnvironmentVariable(key, val);
+            }
+        }
+
+        // 🔍 Mostrar las variables cargadas para verificar
+        string dbUser = Environment.GetEnvironmentVariable("DB_USER");
+        string dbPass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        string dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+        string dbName = Environment.GetEnvironmentVariable("DB_NAME");
+
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(
+            "Error al cargar .env:\n" + ex.Message,
+            "Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error
+        );
+        Application.Current.Shutdown();
+    }
+}
+
     }
 }
 

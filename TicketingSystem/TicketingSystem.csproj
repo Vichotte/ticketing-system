@@ -9,8 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="dotenv.net" Version="4.0.2" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.11" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.2" />
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
 	  <None Update=".env">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
