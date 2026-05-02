@@ -140,6 +140,89 @@ namespace Start
             }
         }
 
+        public async Task<int?> GetUserRole(string username)
+        {
+            try
+            {
+                string host = Environment.GetEnvironmentVariable("DB_HOST");
+                string database = Environment.GetEnvironmentVariable("DB_NAME");
+                string user = Environment.GetEnvironmentVariable("DB_USER");
+                string pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+                var csb = new MySqlConnectionStringBuilder
+                {
+                    Server = host,
+                    Database = database,
+                    UserID = user,
+                    Password = pass,
+                    SslMode = MySqlSslMode.None
+                };
+
+                using var conn = new MySqlConnection(csb.ConnectionString);
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandText = "get_user_role";
+                cmd.Parameters.AddWithValue("@p_username", username);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    return reader.GetInt32(0);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error obteniendo rol: " + ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<string> GetDisplayName(string username)
+        {
+            try
+            {
+                string host = Environment.GetEnvironmentVariable("DB_HOST");
+                string database = Environment.GetEnvironmentVariable("DB_NAME");
+                string user = Environment.GetEnvironmentVariable("DB_USER");
+                string pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+                var csb = new MySqlConnectionStringBuilder
+                {
+                    Server = host,
+                    Database = database,
+                    UserID = user,
+                    Password = pass,
+                    SslMode = MySqlSslMode.None
+                };
+
+                using var conn = new MySqlConnection(csb.ConnectionString);
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandText = "get_display_name";
+                cmd.Parameters.AddWithValue("@p_username", username);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                    return reader.GetString(0);
+
+                return "Usuario";
+            }
+            catch
+            {
+                return "Usuario";
+            }
+        }
+
+
+
 
 
         private async Task ExecuteProcedure(MySqlConnection conn, string procedureName)

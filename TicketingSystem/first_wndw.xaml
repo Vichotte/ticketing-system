@@ -1,0 +1,114 @@
+﻿<Window x:Class="TicketingSystem.first_wndw"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Menú Principal"
+        Height="450"
+        Width="800"
+        Background="#FFF7E6C4"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+
+        <!-- ===================== TOP BAR ===================== -->
+        <Border Background="#FFFCC15E"
+                Height="50"
+                VerticalAlignment="Top"
+                CornerRadius="0,0,15,15"
+                Padding="15,0">
+
+            <DockPanel LastChildFill="False">
+
+                <!-- Título izquierda -->
+                <TextBlock Text="🎟️ Sistema de Tickets"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#FFE63946"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Left"/>
+
+                <!-- Display Name -->
+                <TextBlock x:Name="txtDisplayName"
+                           Text="TEST"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="#FF5C5C5C"
+                           VerticalAlignment="Center"
+                           Margin="10,0,10,0"
+                           DockPanel.Dock="Right"/>
+
+                <!-- Logout -->
+                <Button x:Name="btnLogout"
+                        Content="Salir"
+                        Background="#FFE63946"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Width="70"
+                        Height="30"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Right"/>
+            </DockPanel>
+        </Border>
+
+        <!-- ===================== CONTENIDO PRINCIPAL ===================== -->
+        <Grid Margin="0,70,0,0">
+            <Border Background="#FFFCC15E"
+                    CornerRadius="25"
+                    Padding="30"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="400"
+                    Effect="{DynamicResource MaterialDesignElevationShadow}">
+
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                    <TextBlock Text="Selecciona una opción"
+                               FontSize="20"
+                               Foreground="#FF5C5C5C"
+                               TextAlignment="Center"
+                               Margin="0,0,0,25"/>
+
+                    <!-- Botón Crear Ticket -->
+                    <Border CornerRadius="20" Background="#FFFC7A00" Margin="0,0,0,15">
+                        <Button x:Name="btnCrearTicket"
+                                Content="Crear Ticket"
+                                Height="45"
+                                FontSize="18"
+                                Foreground="White"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontWeight="Bold"/>
+                    </Border>
+
+                    <!-- Botón Mis Tickets -->
+                    <Border CornerRadius="20" Background="#FF4CAF50" Margin="0,0,0,15">
+                        <Button x:Name="btnMisTickets"
+                                Content="Mis Tickets"
+                                Height="45"
+                                FontSize="18"
+                                Foreground="White"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontWeight="Bold"/>
+                    </Border>
+
+                    <!-- Botón Todos los Tickets (solo admin) -->
+                    <Border CornerRadius="20" Background="#FF2196F3" Margin="0,0,0,15">
+                        <Button x:Name="btnTodosTickets"
+                                Content="Todos los Tickets"
+                                Height="45"
+                                FontSize="18"
+                                Foreground="White"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontWeight="Bold"
+                                IsEnabled="False"/>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+
+    </Grid>
+</Window>
