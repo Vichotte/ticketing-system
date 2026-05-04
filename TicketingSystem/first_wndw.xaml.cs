@@ -49,6 +49,14 @@ namespace TicketingSystem
                 this.Close();
             };
 
+            btnMisTickets.Click += (s, e) =>
+            {
+                var state = WindowStateInfo.Capture(this);
+                var wnd = new listmytickets(state, _userId, _isAdmin, _displayName);
+                wnd.Show();
+                this.Close();
+            };
+
             btnLogout.Click += (s, e) =>
             {
                 var state = WindowStateInfo.Capture(this);

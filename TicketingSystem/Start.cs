@@ -9,6 +9,24 @@ namespace Start
 {
     public class Start
     {
+        public string GetConnectionString()
+        {
+            string host = Environment.GetEnvironmentVariable("DB_HOST");
+            string database = Environment.GetEnvironmentVariable("DB_NAME");
+            string user = Environment.GetEnvironmentVariable("DB_USER");
+            string pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+            var csb = new MySqlConnectionStringBuilder
+            {
+                Server = host,
+                Database = database,
+                UserID = user,
+                Password = pass,
+                SslMode = MySqlSslMode.None
+            };
+
+            return csb.ConnectionString;
+        }
         public async Task ConnectionAsync()
         {
             // 1) Intentar cargar .env desde el directorio de ejecución

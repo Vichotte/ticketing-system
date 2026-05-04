@@ -1,0 +1,56 @@
+﻿<Window x:Class="TicketingSystem.listmytickets"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Mis Tickets"
+        Height="600"
+        Width="1000"
+        Background="#FFFDEBD0"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <Border Background="#FFFCC15E"
+                CornerRadius="20"
+                Margin="20"
+                Padding="40">
+
+            <Grid>
+
+                <!-- Título -->
+                <TextBlock Text="🎟️ Mis Tickets"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           Foreground="#E63946"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"
+                           VerticalAlignment="Top"/>
+
+                <!-- Contenedor de tarjetas -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              Margin="0,60,0,70">
+                    <WrapPanel x:Name="wpTickets"
+                               Orientation="Horizontal"
+                               ItemWidth="260"
+                               ItemHeight="180"
+                               Margin="10"
+                               HorizontalAlignment="Center"/>
+                </ScrollViewer>
+
+                <!-- Botón volver -->
+                <Button x:Name="btnVolver"
+                        Content="Volver"
+                        Width="150"
+                        Height="45"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Background="#E63946"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Margin="0,0,0,10"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+

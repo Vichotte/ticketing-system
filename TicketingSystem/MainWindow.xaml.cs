@@ -17,9 +17,11 @@ namespace TicketingSystem
     {
         private Start.Start _start;
         private WindowStateInfo _previousState;
+
         public MainWindow() : this(null)
         {
         }
+
 
         public MainWindow(WindowStateInfo state = null)
         {
