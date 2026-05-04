@@ -73,12 +73,13 @@ namespace Start
                     await ExecuteProcedure(conn, "create_tb_roles");
                     await ExecuteProcedure(conn, "create_tb_departments");
                     await ExecuteProcedure(conn, "create_tb_users");
+                    await ExecuteProcedure(conn, "create_tb_tickets");
 
                     // 8) Crear admin si no existe
                     await ExecuteProcedure(conn, "create_admin");
                 }
 
-                MessageBox.Show("Base de datos lista y conexión exitosa.", "Conexión", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show("Base de datos lista y conexión exitosa.", "Conexión", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -91,6 +92,95 @@ namespace Start
                 Application.Current.Shutdown();
             }
         }
+
+        public async Task<bool> CreateTicket(string titulo, string descripcion, int openedBy)
+        {
+            try
+            {
+                string host = Environment.GetEnvironmentVariable("DB_HOST");
+                string database = Environment.GetEnvironmentVariable("DB_NAME");
+                string user = Environment.GetEnvironmentVariable("DB_USER");
+                string pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+                var csb = new MySqlConnectionStringBuilder
+                {
+                    Server = host,
+                    Database = database,
+                    UserID = user,
+                    Password = pass,
+                    SslMode = MySqlSslMode.None
+                };
+
+                using var conn = new MySqlConnection(csb.ConnectionString);
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandText = "create_tickets";
+
+                cmd.Parameters.AddWithValue("@p_title", titulo);
+                cmd.Parameters.AddWithValue("@p_description", descripcion);
+                cmd.Parameters.AddWithValue("@p_opened_by", openedBy);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    int ticketId = reader.GetInt32("ticket_id");
+                    Console.WriteLine($"Ticket creado con ID: {ticketId}");
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al crear ticket: " + ex.Message);
+                return false;
+            }
+        }
+
+
+
+        public async Task<int?> GetUserIdByDisplayName(string displayName)
+        {
+            try
+            {
+                string host = Environment.GetEnvironmentVariable("DB_HOST");
+                string database = Environment.GetEnvironmentVariable("DB_NAME");
+                string user = Environment.GetEnvironmentVariable("DB_USER");
+                string pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+                var csb = new MySqlConnectionStringBuilder
+                {
+                    Server = host,
+                    Database = database,
+                    UserID = user,
+                    Password = pass,
+                    SslMode = MySqlSslMode.None
+                };
+
+                using var conn = new MySqlConnection(csb.ConnectionString);
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandText = "get_user_id_by_displayname";
+                cmd.Parameters.AddWithValue("@p_display_name", displayName);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                    return reader.GetInt32(0);
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
 
         public async Task<bool> ValidateLogin(string username, string password)
         {
@@ -220,10 +310,6 @@ namespace Start
                 return "Usuario";
             }
         }
-
-
-
-
 
         private async Task ExecuteProcedure(MySqlConnection conn, string procedureName)
         {

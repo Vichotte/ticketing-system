@@ -17,23 +17,20 @@ namespace TicketingSystem
     {
         private Start.Start _start;
         private WindowStateInfo _previousState;
-
-        // 🔹 Constructor sin parámetros (necesario para WPF)
         public MainWindow() : this(null)
         {
         }
 
-        // 🔹 Constructor principal con estado opcional
-        public MainWindow(WindowStateInfo state)
+        public MainWindow(WindowStateInfo state = null)
         {
             InitializeComponent();
 
             _start = new Start.Start();
-            _previousState = state;
 
             if (state != null)
                 WindowStateInfo.Apply(this, state);
         }
+
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -56,13 +53,16 @@ namespace TicketingSystem
             bool isAdmin = (role == 1);
 
             string displayName = await _start.GetDisplayName(us_text);
+            int? userId = await _start.GetUserIdByDisplayName(displayName);
 
             MessageBox.Show("Login Correcto.", "Conexión", MessageBoxButton.OK, MessageBoxImage.Information);
 
             var state = WindowStateInfo.Capture(this);
-            var wnd = new first_wndw(isAdmin, displayName, state);
+
+            var wnd = new first_wndw(isAdmin, displayName, userId.Value, state);
             wnd.Show();
             this.Close();
+
         }
     }
 }

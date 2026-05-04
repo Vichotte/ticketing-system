@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Start;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,24 @@ using System.Windows.Shapes;
 
 namespace TicketingSystem
 {
-    /// <summary>
-    /// Lógica de interacción para first_wndw.xaml
-    /// </summary>
     public partial class first_wndw : Window
     {
-        public first_wndw(bool isAdmin, string displayName, WindowStateInfo previousState)
+        private Start.Start _start;
+        private WindowStateInfo _previousState;
+        private bool _isAdmin;
+        private string _displayName;
+        private int _userId;
+
+        public first_wndw(bool isAdmin, string displayName, int userId, WindowStateInfo previousState)
         {
             InitializeComponent();
+
+            _start = new Start.Start();
+
+            _isAdmin = isAdmin;
+            _displayName = displayName;
+            _userId = userId;
+            _previousState = previousState;
 
             txtDisplayName.Text = displayName;
 
@@ -30,12 +41,22 @@ namespace TicketingSystem
 
             WindowStateInfo.Apply(this, previousState);
 
+            btnCrearTicket.Click += (s, e) =>
+            {
+                var state = WindowStateInfo.Capture(this);
+                var wnd = new create_ticket(state, _userId, _isAdmin, _displayName);
+                wnd.Show();
+                this.Close();
+            };
+
             btnLogout.Click += (s, e) =>
             {
-                var login = new MainWindow(previousState);
+                var state = WindowStateInfo.Capture(this);
+                var login = new MainWindow(state);
                 login.Show();
                 this.Close();
             };
         }
     }
+
 }
