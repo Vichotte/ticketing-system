@@ -17,10 +17,10 @@ namespace TicketingSystem
     public partial class create_ticket : Window
     {
         private WindowStateInfo _previousState;
-        private Start.Start _start;
         private int _userId;
         private bool _isAdmin;
         private string _displayName;
+        private Start.Start _start;
 
         public create_ticket(WindowStateInfo state, int userId, bool isAdmin, string displayName)
         {
@@ -34,6 +34,15 @@ namespace TicketingSystem
             WindowStateInfo.Apply(this, state);
 
             _start = new Start.Start();
+
+            txtDisplayName.Text = _displayName;
+
+            btnLogout.Click += (s, e) =>
+            {
+                var wnd = new MainWindow();
+                wnd.Show();
+                this.Close();
+            };
 
             btnCancelar.Click += (s, e) =>
             {
@@ -60,8 +69,8 @@ namespace TicketingSystem
                 {
                     MessageBox.Show("Ticket creado correctamente.");
 
-                    var state = WindowStateInfo.Capture(this);
-                    var wnd = new first_wndw(_isAdmin, _displayName, _userId, state);
+                    var currentState = WindowStateInfo.Capture(this);
+                    var wnd = new first_wndw(_isAdmin, _displayName, _userId, currentState);
                     wnd.Show();
                     this.Close();
                 }
@@ -70,9 +79,9 @@ namespace TicketingSystem
                     MessageBox.Show("Error al crear el ticket.");
                 }
             };
-
         }
     }
+
 }
 
 

@@ -8,49 +8,109 @@
         WindowStartupLocation="CenterScreen">
 
     <Grid>
+
+        <!-- ===================== TOP BAR ===================== -->
         <Border Background="#FFFCC15E"
-                CornerRadius="20"
-                Margin="20"
-                Padding="40">
+ Height="50"
+ VerticalAlignment="Top"
+ CornerRadius="0,0,15,15"
+ Padding="15,0">
 
-            <Grid>
+            <DockPanel LastChildFill="False">
 
-                <!-- Título -->
-                <TextBlock Text="🎟️ Mis Tickets"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="#E63946"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,20"
-                           VerticalAlignment="Top"/>
+                <!-- Título izquierda -->
+                <TextBlock Text="🎟️ Sistema de Tickets"
+            FontSize="20"
+            FontWeight="Bold"
+            Foreground="#FFE63946"
+            VerticalAlignment="Center"
+            DockPanel.Dock="Left"/>
 
-                <!-- Contenedor de tarjetas -->
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              Margin="0,60,0,70">
-                    <WrapPanel x:Name="wpTickets"
-                               Orientation="Horizontal"
-                               ItemWidth="260"
-                               ItemHeight="180"
-                               Margin="10"
-                               HorizontalAlignment="Center"/>
-                </ScrollViewer>
+                <!-- Panel derecha (usuario + salir) -->
+                <StackPanel Orientation="Horizontal"
+             DockPanel.Dock="Right"
+             VerticalAlignment="Center"
+             Margin="0,0,10,0">
 
-                <!-- Botón volver -->
-                <Button x:Name="btnVolver"
-                        Content="Volver"
-                        Width="150"
-                        Height="45"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="White"
+                    <!-- Display Name -->
+                    <TextBlock x:Name="txtDisplayName"
+                Text="Usuario"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Foreground="#FF5C5C5C"
+                VerticalAlignment="Center"
+                Margin="0,0,15,0"/>
+
+                    <!-- Logout -->
+                    <Border CornerRadius="20"
+             Background="#FFE63946"
+             VerticalAlignment="Center">
+                        <Button x:Name="btnLogout"
+                 Content="Salir"
+                 Background="Transparent"
+                 Foreground="White"
+                 FontWeight="Bold"
+                 Width="70"
+                 Height="30"
+                 BorderThickness="0"
+                 Cursor="Hand"
+                 VerticalAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ===================== CONTENIDO PRINCIPAL ===================== -->
+        <Grid Margin="20,80,20,20">
+
+            <Border Background="#FFF9C74F"
+                    CornerRadius="20"
+                    Padding="40">
+
+                <Grid>
+
+                    <!-- Título -->
+                    <TextBlock Text="🎟️ Mis Tickets"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#E63946"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,20"
+                               VerticalAlignment="Top"/>
+
+                    <!-- Contenedor de tarjetas -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  Margin="0,60,0,70">
+                        <WrapPanel x:Name="wpTickets"
+                                   Orientation="Horizontal"
+                                   ItemWidth="260"
+                                   ItemHeight="180"
+                                   Margin="10"
+                                   HorizontalAlignment="Center"/>
+                    </ScrollViewer>
+
+                    <Border CornerRadius="20"
                         Background="#E63946"
-                        BorderThickness="0"
-                        Cursor="Hand"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
-                        Margin="0,0,0,10"/>
-            </Grid>
-        </Border>
+                        Margin="0,0,0,10">
+
+                        <Button x:Name="btnVolver"
+                            Content="Volver"
+                            Width="150"
+                            Height="45"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"/>     
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
     </Grid>
 </Window>
+
 

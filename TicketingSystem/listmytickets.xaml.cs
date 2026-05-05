@@ -25,9 +25,17 @@ namespace TicketingSystem
             _displayName = displayName;
 
             WindowStateInfo.Apply(this, state);
+
             _start = new Start.Start();
 
-            LoadTickets();
+            txtDisplayName.Text = _displayName;
+
+            btnLogout.Click += (s, e) =>
+            {
+                var wnd = new MainWindow();
+                wnd.Show();
+                this.Close();
+            };
 
             btnVolver.Click += (s, e) =>
             {
@@ -36,6 +44,8 @@ namespace TicketingSystem
                 wnd.Show();
                 this.Close();
             };
+
+            LoadTickets();
         }
 
         private async void LoadTickets()
@@ -155,12 +165,13 @@ namespace TicketingSystem
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public string Status { get; set; }
         public int Priority { get; set; }
         public string CreatedAt { get; set; }
-
-        public string Description { get; set; }
+        public string OpenedBy { get; set; }
     }
+
 }
 
 

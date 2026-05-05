@@ -1,9 +1,10 @@
-﻿using System;
+﻿using BCrypt.Net;
+using MySqlConnector;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using MySqlConnector;
-using BCrypt.Net;
+using TicketingSystem;
 
 namespace Start
 {
@@ -328,6 +329,50 @@ namespace Start
                 return "Usuario";
             }
         }
+
+        public async Task<List<Ticket>> GetAllTickets()
+        {
+            var list = new List<Ticket>();
+
+            using var conn = new MySqlConnection(GetConnectionString());
+            await conn.OpenAsync();
+
+            using var cmd = new MySqlCommand("CALL get_all_tickets()", conn);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                list.Add(new Ticket
+                {
+                    Id = reader.GetInt32("id"),
+                    Title = reader.GetString("title"),
+                    Description = reader.GetString("description"),
+                    Status = reader.GetString("status"),
+                    Priority = reader.GetInt32("priority"),
+                    CreatedAt = reader.GetDateTime("created_at").ToString("yyyy-MM-dd HH:mm"),
+                    OpenedBy = reader.GetString("opened_by")
+                });
+            }
+
+            return list;
+        }
+
+        public async Task UpdateTicketStatus(int ticketId, string newStatusName)
+        {
+            using var conn = new MySqlConnection(GetConnectionString());
+            await conn.OpenAsync();
+
+            using var cmd = new MySqlCommand("CALL update_ticket_status_by_name(@p_ticket_id, @p_status_name)", conn);
+            cmd.Parameters.AddWithValue("@p_ticket_id", ticketId);
+            cmd.Parameters.AddWithValue("@p_status_name", newStatusName);
+
+            await cmd.ExecuteNonQueryAsync();
+
+
+
+        }
+
 
         private async Task ExecuteProcedure(MySqlConnection conn, string procedureName)
         {
