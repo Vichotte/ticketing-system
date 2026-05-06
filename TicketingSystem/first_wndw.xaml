@@ -7,61 +7,96 @@
         Background="#FFFDEBD0"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                Padding="10,5">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#FFB0B0B0"/>
+                                <Setter Property="Foreground" Value="#FFE0E0E0"/>
+                                <Setter Property="Cursor" Value="No"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
 
         <!-- ===================== TOP BAR ===================== -->
         <Border Background="#FFFCC15E"
-        Height="50"
-        VerticalAlignment="Top"
-        CornerRadius="0,0,15,15"
-        Padding="15,0">
+                Height="50"
+                VerticalAlignment="Top"
+                CornerRadius="0,0,15,15"
+                Padding="15,0">
 
             <DockPanel LastChildFill="False">
 
                 <!-- Título izquierda -->
                 <TextBlock Text="🎟️ Sistema de Tickets"
-                   FontSize="20"
-                   FontWeight="Bold"
-                   Foreground="#FFE63946"
-                   VerticalAlignment="Center"
-                   DockPanel.Dock="Left"/>
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#FFE63946"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Left"/>
 
                 <!-- Panel derecha (usuario + salir) -->
                 <StackPanel Orientation="Horizontal"
-                    DockPanel.Dock="Right"
-                    VerticalAlignment="Center"
-                    Margin="0,0,10,0">
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,10,0">
 
                     <!-- Display Name -->
                     <TextBlock x:Name="txtDisplayName"
-                       Text="Usuario"
-                       FontSize="18"
-                       FontWeight="SemiBold"
-                       Foreground="#FF5C5C5C"
-                       VerticalAlignment="Center"
-                       Margin="0,0,15,0"/>
+                               Text="Usuario"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#FF5C5C5C"
+                               VerticalAlignment="Center"
+                               Margin="0,0,15,0"/>
 
                     <!-- Logout -->
                     <Border CornerRadius="20"
-                    Background="#FFE63946"
-                    VerticalAlignment="Center">
+                            Background="#FFE63946"
+                            VerticalAlignment="Center">
                         <Button x:Name="btnLogout"
-                        Content="Log Out"
-                        Background="Transparent"
-                        Foreground="White"
-                        FontWeight="Bold"
-                        Width="70"
-                        Height="30"
-                        BorderThickness="0"
-                        Cursor="Hand"
-                        VerticalAlignment="Center"/>
+                                Content="Exit"
+                                Width="70"
+                                Height="30"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                FontSize="16"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                Cursor="Hand"
+                                VerticalAlignment="Center"/>
                     </Border>
                 </StackPanel>
             </DockPanel>
         </Border>
 
 
-        <!-- ===================== CONTENEDOR CENTRAL (IGUAL AL LOGIN) ===================== -->
+        <!-- ===================== CONTENEDOR CENTRAL ===================== -->
         <Grid Margin="20,80,20,20">
             <Border CornerRadius="20" Background="#FFF9C74F" Padding="20">
 
@@ -75,47 +110,44 @@
                                Margin="0,0,0,20"/>
 
                     <!-- Botón Crear Ticket -->
-                    <Border CornerRadius="20" Background="#FFFC7A00" Margin="0,0,0,15">
-                        <Button x:Name="btnCrearTicket"
-                                Content="Crear Ticket"
-                                Width="250"
-                                Height="45"
-                                Foreground="White"
-                                FontWeight="Bold"
-                                FontSize="18"
-                                BorderThickness="0"
-                                Background="Transparent"
-                                Cursor="Hand"/>
-                    </Border>
+                    <Button x:Name="btnCrearTicket"
+                            Content="Crear Ticket"
+                            Width="250"
+                            Height="45"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            FontSize="18"
+                            BorderThickness="0"
+                            Background="#FFFC7A00"
+                            Cursor="Hand"
+                            Margin="0,0,0,15"/>
 
                     <!-- Botón Mis Tickets -->
-                    <Border CornerRadius="20" Background="#FF4CAF50" Margin="0,0,0,15">
-                        <Button x:Name="btnMisTickets"
-                                Content="Mis Tickets"
-                                Width="250"
-                                Height="45"
-                                Foreground="White"
-                                FontWeight="Bold"
-                                FontSize="18"
-                                BorderThickness="0"
-                                Background="Transparent"
-                                Cursor="Hand"/>
-                    </Border>
+                    <Button x:Name="btnMisTickets"
+                            Content="Mis Tickets"
+                            Width="250"
+                            Height="45"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            FontSize="18"
+                            BorderThickness="0"
+                            Background="#FF4CAF50"
+                            Cursor="Hand"
+                            Margin="0,0,0,15"/>
 
-                    <!-- Botón Todos los Tickets -->
-                    <Border CornerRadius="20" Background="#FF2196F3" Margin="0,0,0,15">
-                        <Button x:Name="btnTodosTickets"
-                                Content="Todos los Tickets"
-                                Width="250"
-                                Height="45"
-                                Foreground="White"
-                                FontWeight="Bold"
-                                FontSize="18"
-                                BorderThickness="0"
-                                Background="Transparent"
-                                Cursor="Hand"
-                                IsEnabled="False"/>
-                    </Border>
+                    <!-- Botón Todos los Tickets (deshabilitado visualmente) -->
+                    <Button x:Name="btnTodosTickets"
+                            Content="Todos los Tickets"
+                            Width="250"
+                            Height="45"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            FontSize="18"
+                            BorderThickness="0"
+                            Background="#FF2196F3"
+                            Cursor="Hand"
+                            IsEnabled="False"
+                            Margin="0,0,0,15"/>
 
                 </StackPanel>
             </Border>
@@ -123,3 +155,4 @@
 
     </Grid>
 </Window>
+
