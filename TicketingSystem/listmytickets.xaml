@@ -11,50 +11,64 @@
 
         <!-- ===================== TOP BAR ===================== -->
         <Border Background="#FFFCC15E"
- Height="50"
- VerticalAlignment="Top"
- CornerRadius="0,0,15,15"
- Padding="15,0">
+         Height="50"
+         VerticalAlignment="Top"
+         CornerRadius="0,0,15,15"
+         Padding="15,0">
 
             <DockPanel LastChildFill="False">
 
+                <!-- BOTÓN VOLVER ATRÁS -->
+                <Button x:Name="btnBack"
+                Content="⟵"
+                Width="40"
+                Height="40"
+                FontSize="22"
+                FontWeight="Bold"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                Foreground="#E63946"
+                DockPanel.Dock="Left"
+                Margin="0,0,10,0"/>
+
                 <!-- Título izquierda -->
                 <TextBlock Text="🎟️ Sistema de Tickets"
-            FontSize="20"
-            FontWeight="Bold"
-            Foreground="#FFE63946"
-            VerticalAlignment="Center"
-            DockPanel.Dock="Left"/>
+                FontSize="20"
+                FontWeight="Bold"
+                Foreground="#FFE63946"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"/>
 
                 <!-- Panel derecha (usuario + salir) -->
                 <StackPanel Orientation="Horizontal"
-             DockPanel.Dock="Right"
-             VerticalAlignment="Center"
-             Margin="0,0,10,0">
+                 DockPanel.Dock="Right"
+                 VerticalAlignment="Center"
+                 Margin="0,0,10,0">
 
                     <!-- Display Name -->
                     <TextBlock x:Name="txtDisplayName"
-                Text="Usuario"
-                FontSize="18"
-                FontWeight="SemiBold"
-                Foreground="#FF5C5C5C"
-                VerticalAlignment="Center"
-                Margin="0,0,15,0"/>
+                    Text="Usuario"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Foreground="#FF5C5C5C"
+                    VerticalAlignment="Center"
+                    Margin="0,0,15,0"/>
 
                     <!-- Logout -->
                     <Border CornerRadius="20"
-             Background="#FFE63946"
-             VerticalAlignment="Center">
+                     Background="#FFE63946"
+                     VerticalAlignment="Center">
                         <Button x:Name="btnLogout"
-                 Content="Salir"
-                 Background="Transparent"
-                 Foreground="White"
-                 FontWeight="Bold"
-                 Width="70"
-                 Height="30"
-                 BorderThickness="0"
-                 Cursor="Hand"
-                 VerticalAlignment="Center"/>
+                     Content="Log Out"
+                     Background="Transparent"
+                     Foreground="White"
+                     FontWeight="Bold"
+                     Width="70"
+                     Height="30"
+                     BorderThickness="0"
+                     Cursor="Hand"
+                     VerticalAlignment="Center"/>
                     </Border>
                 </StackPanel>
             </DockPanel>
@@ -68,7 +82,6 @@
                     Padding="40">
 
                 <Grid>
-
                     <!-- Título -->
                     <TextBlock Text="🎟️ Mis Tickets"
                                FontSize="28"
@@ -88,28 +101,9 @@
                                    Margin="10"
                                    HorizontalAlignment="Center"/>
                     </ScrollViewer>
-
-                    <Border CornerRadius="20"
-                        Background="#E63946"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        Margin="0,0,0,10">
-
-                        <Button x:Name="btnVolver"
-                            Content="Volver"
-                            Width="150"
-                            Height="45"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Foreground="White"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Cursor="Hand"/>     
-                    </Border>
                 </Grid>
             </Border>
         </Grid>
-
     </Grid>
 </Window>
 

@@ -46,7 +46,7 @@
                     Background="#FFE63946"
                     VerticalAlignment="Center">
                         <Button x:Name="btnLogout"
-                        Content="Salir"
+                        Content="Log Out"
                         Background="Transparent"
                         Foreground="White"
                         FontWeight="Bold"

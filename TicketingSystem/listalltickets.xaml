@@ -11,43 +11,60 @@
 
         <!-- ===================== TOP BAR ===================== -->
         <Border Background="#FFFCC15E"
-                Height="50"
-                VerticalAlignment="Top"
-                CornerRadius="0,0,15,15"
-                Padding="15,0">
-            <DockPanel LastChildFill="False">
-                <TextBlock Text="🎟️ Sistema de Tickets"
-                           FontSize="20"
-                           FontWeight="Bold"
-                           Foreground="#E63946"
-                           VerticalAlignment="Center"
-                           DockPanel.Dock="Left"/>
+        Height="50"
+        VerticalAlignment="Top"
+        CornerRadius="0,0,15,15"
+        Padding="15,0">
+        <DockPanel LastChildFill="False">
 
+                <!-- BOTÓN VOLVER ATRÁS -->
+                <Button x:Name="btnBack"
+                Content="⟵"
+                Width="40"
+                Height="40"
+                FontSize="22"
+                FontWeight="Bold"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                Foreground="#E63946"
+                DockPanel.Dock="Left"
+                Margin="0,0,10,0"/>
+
+                <!-- TÍTULO -->
+                <TextBlock Text="🎟️ Sistema de Tickets"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Foreground="#E63946"
+                   VerticalAlignment="Center"
+                   DockPanel.Dock="Left"/>
+
+                <!-- DERECHA: USUARIO + LOGOUT -->
                 <StackPanel Orientation="Horizontal"
-                            DockPanel.Dock="Right"
-                            VerticalAlignment="Center"
-                            Margin="0,0,10,0">
+                    DockPanel.Dock="Right"
+                    VerticalAlignment="Center"
+                    Margin="0,0,10,0">
 
                     <TextBlock x:Name="txtDisplayName"
-                               Text="Usuario"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#5C5C5C"
-                               VerticalAlignment="Center"
-                               Margin="0,0,15,0"/>
+                       Text="Usuario"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="#5C5C5C"
+                       VerticalAlignment="Center"
+                       Margin="0,0,15,0"/>
 
                     <Border CornerRadius="20"
-                            Background="#E63946"
-                            VerticalAlignment="Center">
+                    Background="#E63946"
+                    VerticalAlignment="Center">
                         <Button x:Name="btnLogout"
-                                Content="Salir"
-                                Background="Transparent"
-                                Foreground="White"
-                                FontWeight="Bold"
-                                Width="70"
-                                Height="30"
-                                BorderThickness="0"
-                                Cursor="Hand"/>
+                        Content="Log Out"
+                        Background="Transparent"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Width="70"
+                        Height="30"
+                        BorderThickness="0"
+                        Cursor="Hand"/>
                     </Border>
                 </StackPanel>
             </DockPanel>

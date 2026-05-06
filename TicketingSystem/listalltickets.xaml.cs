@@ -14,6 +14,8 @@ namespace TicketingSystem
         private string _displayName;
         private Start.Start _start;
 
+
+
         public listalltickets(WindowStateInfo state, int userId, bool isAdmin, string displayName)
         {
             InitializeComponent();
@@ -34,6 +36,15 @@ namespace TicketingSystem
                 wnd.Show();
                 this.Close();
             };
+
+            btnBack.Click += (s, e) =>
+            {
+                // Volver a la ventana anterior manteniendo el estado
+                var wnd = new first_wndw(_isAdmin, _displayName, _userId, _previousState);
+                wnd.Show();
+                this.Close();
+            };
+
 
             LoadTickets();
         }
@@ -231,6 +242,8 @@ namespace TicketingSystem
 
             return null;
         }
+
+
     }
 }
 

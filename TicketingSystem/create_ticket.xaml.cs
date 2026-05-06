@@ -44,10 +44,10 @@ namespace TicketingSystem
                 this.Close();
             };
 
-            btnCancelar.Click += (s, e) =>
+            btnBack.Click += (s, e) =>
             {
-                var currentState = WindowStateInfo.Capture(this);
-                var wnd = new first_wndw(_isAdmin, _displayName, _userId, currentState);
+                // Volver a la ventana anterior manteniendo el estado
+                var wnd = new first_wndw(_isAdmin, _displayName, _userId, _previousState);
                 wnd.Show();
                 this.Close();
             };
