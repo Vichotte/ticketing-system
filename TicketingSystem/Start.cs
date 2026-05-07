@@ -368,9 +368,6 @@ namespace Start
             cmd.Parameters.AddWithValue("@p_status_name", newStatusName);
 
             await cmd.ExecuteNonQueryAsync();
-
-
-
         }
 
 
@@ -380,6 +377,26 @@ namespace Start
             cmd.CommandText = $"CALL {procedureName}();";
             await cmd.ExecuteNonQueryAsync();
         }
+
+        public async Task UpdateLastLogin(string username)
+        {
+            try
+            {
+                using var conn = new MySqlConnection(GetConnectionString());
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "CALL update_last_login(@user);";
+                cmd.Parameters.AddWithValue("@user", username);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error actualizando último login: " + ex.Message);
+            }
+        }
+
 
         private void TryLoadDotEnv()
 {
@@ -422,7 +439,6 @@ namespace Start
             }
         }
 
-        // 🔍 Mostrar las variables cargadas para verificar
         string dbUser = Environment.GetEnvironmentVariable("DB_USER");
         string dbPass = Environment.GetEnvironmentVariable("DB_PASSWORD");
         string dbHost = Environment.GetEnvironmentVariable("DB_HOST");
@@ -441,6 +457,40 @@ namespace Start
     }
 }
 
+        public async Task<List<dynamic>> GetAllUsers()
+        {
+            var lista = new List<dynamic>();
+
+            try
+            {
+                using var conn = new MySqlConnection(GetConnectionString());
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "CALL get_all_users();";
+
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    lista.Add(new
+                    {
+                        username = reader["username"].ToString(),
+                        display_name = reader["display_name"].ToString(),
+                        role_name = reader["role_name"].ToString(),
+                        last_login_at = reader["last_login_at"]?.ToString(),
+                        created_at = reader["created_at"]?.ToString(),
+                        updated_at = reader["updated_at"]?.ToString()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error cargando usuarios: " + ex.Message);
+            }
+
+            return lista;
+        }
     }
 }
 

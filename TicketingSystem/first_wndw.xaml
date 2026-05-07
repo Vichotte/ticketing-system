@@ -40,7 +40,6 @@
             </Setter>
         </Style>
     </Window.Resources>
-
     <Grid>
 
         <!-- ===================== TOP BAR ===================== -->
@@ -149,6 +148,19 @@
                             IsEnabled="False"
                             Margin="0,0,0,15"/>
 
+                    <!-- Botón Gestión de Usuarios -->
+                    <Button x:Name="btnGestionUsuarios"
+                    Content="Gestión de Usuarios"
+                    Width="250"
+                    Height="45"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    FontSize="18"
+                    BorderThickness="0"
+                    Background="#FF9C27B0"
+                    Cursor="Hand"
+                    IsEnabled="False"
+                    Margin="0,0,0,15"/>
                 </StackPanel>
             </Border>
         </Grid>

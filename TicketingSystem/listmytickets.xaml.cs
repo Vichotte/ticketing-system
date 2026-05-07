@@ -42,7 +42,7 @@ namespace TicketingSystem
                 // Volver a la ventana anterior manteniendo el estado
                 var wnd = new first_wndw(_isAdmin, _displayName, _userId, _previousState);
                 wnd.Show();
-                this.Close();
+                this.Hide();
             };
 
             LoadTickets();

@@ -37,7 +37,10 @@ namespace TicketingSystem
             txtDisplayName.Text = displayName;
 
             if (isAdmin)
-                btnTodosTickets.IsEnabled = true;
+            {
+            btnTodosTickets.IsEnabled = true;
+            btnGestionUsuarios.IsEnabled = true;
+            }
 
             WindowStateInfo.Apply(this, previousState);
 
@@ -72,7 +75,15 @@ namespace TicketingSystem
                 login.Show();
                 this.Close();
             };
+
+            btnGestionUsuarios.Click += (s, e) =>
+            {
+                var state = WindowStateInfo.Capture(this);
+                var wnd = new gestion_usuarios(state, _userId, _isAdmin, _displayName);
+                wnd.Show();
+                this.Close();
+            };
+
         }
     }
-
 }

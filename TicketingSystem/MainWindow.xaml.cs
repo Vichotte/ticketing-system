@@ -51,6 +51,8 @@ namespace TicketingSystem
                 return;
             }
 
+            await _start.UpdateLastLogin(us_text);
+
             int? role = await _start.GetUserRole(us_text);
             bool isAdmin = (role == 1);
 
@@ -64,7 +66,7 @@ namespace TicketingSystem
             var wnd = new first_wndw(isAdmin, displayName, userId.Value, state);
             wnd.Show();
             this.Close();
-
         }
+
     }
 }

@@ -1,0 +1,181 @@
+﻿<Window x:Class="TicketingSystem.gestion_usuarios"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gestión de Usuarios"
+        Height="600"
+        Width="1000"
+        Background="#FFFDEBD0"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- ===================== ESTILOS GLOBALES ===================== -->
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                Padding="10,5">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#FFB0B0B0"/>
+                                <Setter Property="Foreground" Value="#FFE0E0E0"/>
+                                <Setter Property="Cursor" Value="No"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+
+        <!-- ===================== TOP BAR ===================== -->
+        <Border Background="#FFFCC15E"
+                Height="50"
+                VerticalAlignment="Top"
+                CornerRadius="0,0,15,15"
+                Padding="15,0">
+
+            <DockPanel LastChildFill="False">
+
+                <!-- BOTÓN VOLVER ATRÁS -->
+                <Button x:Name="btnBack"
+                        Content="⟵"
+                        Width="40"
+                        Height="40"
+                        FontSize="22"
+                        FontWeight="Bold"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Foreground="#E63946"
+                        DockPanel.Dock="Left"
+                        Margin="0,0,10,0"/>
+
+                <!-- TÍTULO -->
+                <TextBlock Text="🎟️ Gestión de Usuarios"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#E63946"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Left"/>
+
+                <!-- DERECHA: USUARIO + EXIT -->
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,10,0">
+
+                    <TextBlock x:Name="txtDisplayName"
+                               Text="Usuario"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#5C5C5C"
+                               VerticalAlignment="Center"
+                               Margin="0,0,15,0"/>
+
+                    <Border CornerRadius="20"
+                            Background="#E63946"
+                            VerticalAlignment="Center">
+                        <Button x:Name="btnLogout"
+                                Content="Exit"
+                                Width="70"
+                                Height="30"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                FontSize="16"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                Cursor="Hand"
+                                VerticalAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ===================== CONTENIDO PRINCIPAL ===================== -->
+        <Grid Margin="20,80,20,20">
+            <Border CornerRadius="20" Background="#FFF9C74F" Padding="40">
+
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+
+                    <TextBlock Text="Gestión de Usuarios"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#E63946"
+                               TextAlignment="Center"
+                               Margin="0,0,0,30"/>
+
+                    <!-- Botones -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+                        <Button x:Name="btnCrearUsuario"
+                                Content="Crear Usuario"
+                                Width="200"
+                                Height="45"
+                                Background="#FF4CAF50"
+                                Margin="0,0,20,0"/>
+
+                        <Button x:Name="btnVerUsuarios"
+                                Content="Ver Todos los Usuarios"
+                                Width="220"
+                                Height="45"
+                                Background="#FF2196F3"/>
+                    </StackPanel>
+
+                    <!-- Tabla de usuarios -->
+                    <Border Background="White"
+                            CornerRadius="15"
+                            Padding="15"
+                            Width="900"
+                            Height="350"
+                            BorderBrush="#FFE63946"
+                            BorderThickness="2">
+
+                        <DataGrid x:Name="dgUsuarios"
+                                  AutoGenerateColumns="False"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="None"
+                                  RowHeight="35"
+                                  FontSize="16"
+                                  AlternatingRowBackground="#FFFDEBD0"
+                                  Background="White"
+                                  BorderThickness="0">
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Usuario" Binding="{Binding username}" Width="150"/>
+                                <DataGridTextColumn Header="Nombre" Binding="{Binding display_name}" Width="200"/>
+                                <DataGridTextColumn Header="Rol" Binding="{Binding role_name}" Width="150"/>
+                                <DataGridTextColumn Header="Último Login" Binding="{Binding last_login_at}" Width="150"/>
+                                <DataGridTextColumn Header="Creado" Binding="{Binding created_at}" Width="150"/>
+                                <DataGridTextColumn Header="Actualizado" Binding="{Binding updated_at}" Width="150"/>
+                            </DataGrid.Columns>
+
+                        </DataGrid>
+
+                    </Border>
+
+                </StackPanel>
+
+            </Border>
+        </Grid>
+
+    </Grid>
+</Window>
