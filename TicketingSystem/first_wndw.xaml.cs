@@ -49,7 +49,7 @@ namespace TicketingSystem
                 var state = WindowStateInfo.Capture(this);
                 var wnd = new create_ticket(state, _userId, _isAdmin, _displayName);
                 wnd.Show();
-                this.Close();
+                this.Hide();
             };
 
             btnMisTickets.Click += (s, e) =>
@@ -57,7 +57,7 @@ namespace TicketingSystem
                 var state = WindowStateInfo.Capture(this);
                 var wnd = new listmytickets(state, _userId, _isAdmin, _displayName);
                 wnd.Show();
-                this.Close();
+                this.Hide();
             };
 
             btnTodosTickets.Click += (s, e) =>
@@ -65,15 +65,25 @@ namespace TicketingSystem
                 var state = WindowStateInfo.Capture(this);
                 var wnd = new listalltickets(state, _userId, _isAdmin, _displayName);
                 wnd.Show();
-                this.Close();
+                this.Hide();
             };
 
             btnLogout.Click += (s, e) =>
             {
-                var state = WindowStateInfo.Capture(this);
-                var login = new MainWindow(state);
+                var login = new MainWindow();
                 login.Show();
-                this.Close();
+
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != login)
+                        w.Hide();
+                }
+
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != login)
+                        w.Close();
+                }
             };
 
             btnGestionUsuarios.Click += (s, e) =>
@@ -81,7 +91,7 @@ namespace TicketingSystem
                 var state = WindowStateInfo.Capture(this);
                 var wnd = new gestion_usuarios(state, _userId, _isAdmin, _displayName);
                 wnd.Show();
-                this.Close();
+                this.Hide();
             };
 
         }

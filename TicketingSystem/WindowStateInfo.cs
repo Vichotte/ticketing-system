@@ -27,7 +27,6 @@ namespace TicketingSystem
                 Top = wnd.Top
             };
         }
-
         public static void Apply(Window wnd, WindowStateInfo info)
         {
             wnd.WindowStartupLocation = WindowStartupLocation.Manual;

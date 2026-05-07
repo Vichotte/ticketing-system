@@ -32,17 +32,33 @@ namespace TicketingSystem
 
             btnLogout.Click += (s, e) =>
             {
-                var wnd = new MainWindow();
-                wnd.Show();
-                this.Close();
+                var login = new MainWindow();
+                login.Show();
+
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != login)
+                        w.Hide();
+                }
+
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != login)
+                        w.Close();
+                }
             };
 
             btnBack.Click += (s, e) =>
             {
-                // Volver a la ventana anterior manteniendo el estado
-                var wnd = new first_wndw(_isAdmin, _displayName, _userId, _previousState);
-                wnd.Show();
-                this.Close();
+                var wnd = Application.Current.Windows
+                 .OfType<first_wndw>()
+                 .FirstOrDefault();
+
+                if (wnd != null)
+                {
+                    wnd.Show();
+                    this.Hide();
+                }
             };
 
 

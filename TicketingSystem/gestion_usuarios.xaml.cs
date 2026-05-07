@@ -30,17 +30,34 @@ namespace TicketingSystem
             // Botón volver atrás
             btnBack.Click += (s, e) =>
             {
-                var wnd = new first_wndw(_isAdmin, _displayName, _userId, WindowStateInfo.Capture(this));
-                wnd.Show();
-                this.Close();
+                var wnd = Application.Current.Windows
+                 .OfType<first_wndw>()
+                 .FirstOrDefault();
+
+                if (wnd != null)
+                {
+                    wnd.Show();
+                    this.Hide();
+                }
             };
 
             // Botón logout
             btnLogout.Click += (s, e) =>
             {
-                var wnd = new MainWindow(WindowStateInfo.Capture(this));
-                wnd.Show();
-                this.Close();
+                var login = new MainWindow();
+                login.Show();
+
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != login)
+                        w.Hide();
+                }
+
+                foreach (Window w in Application.Current.Windows)
+                {
+                    if (w != login)
+                        w.Close();
+                }
             };
 
             // Crear usuario

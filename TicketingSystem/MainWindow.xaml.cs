@@ -21,8 +21,6 @@ namespace TicketingSystem
         public MainWindow() : this(null)
         {
         }
-
-
         public MainWindow(WindowStateInfo state = null)
         {
             InitializeComponent();
@@ -32,8 +30,6 @@ namespace TicketingSystem
             if (state != null)
                 WindowStateInfo.Apply(this, state);
         }
-
-
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await _start.ConnectionAsync();
@@ -65,7 +61,7 @@ namespace TicketingSystem
 
             var wnd = new first_wndw(isAdmin, displayName, userId.Value, state);
             wnd.Show();
-            this.Close();
+            this.Hide();
         }
 
     }
