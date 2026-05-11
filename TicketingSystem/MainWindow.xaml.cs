@@ -37,32 +37,50 @@ namespace TicketingSystem
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            string us_text = user_text.Text;
-            string pa_text = password_text.Password;
+            string username = user_text.Text.Trim();
+            string password = password_text.Password;
 
-            bool ok = await _start.ValidateLogin(us_text, pa_text);
-            if (!ok)
+            var result = await _start.ValidateLogin(username, password);
+
+            if (!result.ok)
             {
-                MessageBox.Show("Credenciales incorrectas.");
+                MessageBox.Show("Credenciales incorrectas o usuario inactivo.",
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            await _start.UpdateLastLogin(us_text);
+            // ✔ Comprobar si es primer login
+            DateTime? lastLogin = await _start.GetLastLogin(username);
 
-            int? role = await _start.GetUserRole(us_text);
-            bool isAdmin = (role == 1);
+            if (lastLogin == null)
+            {
+                // Abrir ventana de cambio de contraseña
+                var wnd = new ChangePasswordWindow(username);
+                wnd.Show();
+                this.Hide();
+                return;
+            }
 
-            string displayName = await _start.GetDisplayName(us_text);
-            int? userId = await _start.GetUserIdByDisplayName(displayName);
+            // ✔ Login normal
+            await _start.UpdateLastLogin(username);
 
-            MessageBox.Show("Login Correcto.", "Conexión", MessageBoxButton.OK, MessageBoxImage.Information);
+            int userId = result.userId;
+            string displayName = result.displayName;
+            int roleId = result.roleId;
+
+            bool isAdmin = (roleId == 1);
+
+            MessageBox.Show("Login Correcto.", "Conexión",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
 
             var state = WindowStateInfo.Capture(this);
 
-            var wnd = new first_wndw(isAdmin, displayName, userId.Value, state);
-            wnd.Show();
+            var wnd2 = new first_wndw(isAdmin, displayName, userId, state);
+            wnd2.Show();
             this.Hide();
         }
+
+
 
     }
 }

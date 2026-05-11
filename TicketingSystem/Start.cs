@@ -201,53 +201,38 @@ namespace Start
 
 
 
-        public async Task<bool> ValidateLogin(string username, string password)
+        public async Task<(bool ok, int userId, string displayName, int roleId)> ValidateLogin(string username, string password)
         {
-            try
+            using var conn = new MySqlConnection(GetConnectionString());
+            await conn.OpenAsync();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "CALL validate_login(@username);";
+            cmd.Parameters.AddWithValue("@username", username);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            if (!await reader.ReadAsync())
             {
-                string host = Environment.GetEnvironmentVariable("DB_HOST");
-                string database = Environment.GetEnvironmentVariable("DB_NAME");
-                string user = Environment.GetEnvironmentVariable("DB_USER");
-                string pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
-
-                var csb = new MySqlConnectionStringBuilder
-                {
-                    Server = host,
-                    Database = database,
-                    UserID = user,
-                    Password = pass,
-                    SslMode = MySqlSslMode.None
-                };
-
-                using var conn = new MySqlConnection(csb.ConnectionString);
-                await conn.OpenAsync();
-
-                using var cmd = conn.CreateCommand();
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.CommandText = "validate_admin_login";
-                cmd.Parameters.AddWithValue("@p_username", username);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-
-                string storedHash = null;
-                if (await reader.ReadAsync())
-                {
-                    int ordinal = reader.GetOrdinal("password_hash");
-                    storedHash = reader.GetString(ordinal);
-                    
-                }
-
-                if (string.IsNullOrEmpty(storedHash))
-                    return false; // usuario no existe
-
-                return BCrypt.Net.BCrypt.Verify(password, storedHash);
+                // ❌ Usuario no existe o está inactivo
+                return (false, 0, null, 0);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error en login: " + ex.Message);
-                return false;
-            }
+
+            string storedHash = reader.GetString("password_hash");
+
+            // ✔ Validar contraseña con BCrypt
+            bool passwordOk = BCrypt.Net.BCrypt.Verify(password, storedHash);
+
+            if (!passwordOk)
+                return (false, 0, null, 0);
+
+            int userId = reader.GetInt32("id");
+            string displayName = reader.GetString("display_name");
+            int roleId = reader.GetInt32("role_id");
+
+            return (true, userId, displayName, roleId);
         }
+
 
         public async Task<int?> GetUserRole(string username)
         {
@@ -399,63 +384,63 @@ namespace Start
 
 
         private void TryLoadDotEnv()
-{
-    try
-    {
-        string exeDir = AppDomain.CurrentDomain.BaseDirectory;
-        string envPath = Path.Combine(exeDir, ".env");
-
-        if (!File.Exists(envPath))
         {
-            string projectEnv = Path.Combine(Directory.GetCurrentDirectory(), ".env");
-            if (File.Exists(projectEnv)) envPath = projectEnv;
-            else
+            try
             {
-                MessageBox.Show("No se encontró el archivo .env en el directorio de ejecución ni en el proyecto.");
-                return;
+                string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+                string envPath = Path.Combine(exeDir, ".env");
+
+                if (!File.Exists(envPath))
+                {
+                    string projectEnv = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+                    if (File.Exists(projectEnv)) envPath = projectEnv;
+                    else
+                    {
+                        MessageBox.Show("No se encontró el archivo .env en el directorio de ejecución ni en el proyecto.");
+                        return;
+                    }
+                }
+
+                foreach (var rawLine in File.ReadAllLines(envPath))
+                {
+                    string line = rawLine.Trim();
+                    if (string.IsNullOrEmpty(line)) continue;
+                    if (line.StartsWith("#")) continue;
+
+                    int idx = line.IndexOf('=');
+                    if (idx <= 0) continue;
+
+                    string key = line.Substring(0, idx).Trim();
+                    string val = line.Substring(idx + 1).Trim();
+
+                    if ((val.StartsWith("\"") && val.EndsWith("\"")) || (val.StartsWith("'") && val.EndsWith("'")))
+                    {
+                        val = val.Substring(1, val.Length - 2);
+                    }
+
+                    if (Environment.GetEnvironmentVariable(key) == null)
+                    {
+                        Environment.SetEnvironmentVariable(key, val);
+                    }
+                }
+
+                string dbUser = Environment.GetEnvironmentVariable("DB_USER");
+                string dbPass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+                string dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+                string dbName = Environment.GetEnvironmentVariable("DB_NAME");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al cargar .env:\n" + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+                Application.Current.Shutdown();
             }
         }
-
-        foreach (var rawLine in File.ReadAllLines(envPath))
-        {
-            string line = rawLine.Trim();
-            if (string.IsNullOrEmpty(line)) continue;
-            if (line.StartsWith("#")) continue;
-
-            int idx = line.IndexOf('=');
-            if (idx <= 0) continue;
-
-            string key = line.Substring(0, idx).Trim();
-            string val = line.Substring(idx + 1).Trim();
-
-            if ((val.StartsWith("\"") && val.EndsWith("\"")) || (val.StartsWith("'") && val.EndsWith("'")))
-            {
-                val = val.Substring(1, val.Length - 2);
-            }
-
-            if (Environment.GetEnvironmentVariable(key) == null)
-            {
-                Environment.SetEnvironmentVariable(key, val);
-            }
-        }
-
-        string dbUser = Environment.GetEnvironmentVariable("DB_USER");
-        string dbPass = Environment.GetEnvironmentVariable("DB_PASSWORD");
-        string dbHost = Environment.GetEnvironmentVariable("DB_HOST");
-        string dbName = Environment.GetEnvironmentVariable("DB_NAME");
-
-    }
-    catch (Exception ex)
-    {
-        MessageBox.Show(
-            "Error al cargar .env:\n" + ex.Message,
-            "Error",
-            MessageBoxButton.OK,
-            MessageBoxImage.Error
-        );
-        Application.Current.Shutdown();
-    }
-}
 
         public async Task<List<dynamic>> GetAllUsers()
         {
@@ -491,6 +476,115 @@ namespace Start
 
             return lista;
         }
+        public async Task CreateUser(string username, string displayName, string roleName)
+        {
+            try
+            {
+                using var conn = new MySqlConnection(GetConnectionString());
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "CALL create_user(@username, @display_name, @role_name);";
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@display_name", displayName);
+                cmd.Parameters.AddWithValue("@role_name", roleName);
+
+                await cmd.ExecuteNonQueryAsync();
+
+                MessageBox.Show(
+                    "La contrasenya por defecto sera: hola123",
+                    "Usuario creado satisfactoriamente",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error creando usuario: " + ex.Message);
+            }
+        }
+
+
+        public async Task UpdateUser(string originalUsername, string newUsername, string displayName, string roleName)
+        {
+            try
+            {
+                using var conn = new MySqlConnection(GetConnectionString());
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "CALL update_user(@original_username, @new_username, @display_name, @role_name);";
+
+                cmd.Parameters.AddWithValue("@original_username", originalUsername);
+                cmd.Parameters.AddWithValue("@new_username", newUsername);
+                cmd.Parameters.AddWithValue("@display_name", displayName);
+                cmd.Parameters.AddWithValue("@role_name", roleName);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error actualizando usuario: " + ex.Message);
+            }
+        }
+
+
+
+        public async Task DeleteUser(string username)
+        {
+            try
+            {
+                using var conn = new MySqlConnection(GetConnectionString());
+                await conn.OpenAsync();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "CALL delete_user(@username);";
+                cmd.Parameters.AddWithValue("@username", username);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error eliminando usuario: " + ex.Message);
+            }
+        }
+
+        public async Task UpdatePassword(string username, string newHash)
+        {
+            using var conn = new MySqlConnection(GetConnectionString());
+            await conn.OpenAsync();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "CALL update_password(@username, @new_hash);";
+            cmd.Parameters.AddWithValue("@username", username);
+            cmd.Parameters.AddWithValue("@new_hash", newHash);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        public async Task<DateTime?> GetLastLogin(string username)
+        {
+            using var conn = new MySqlConnection(GetConnectionString());
+            await conn.OpenAsync();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT last_login_at FROM users WHERE username = @username;";
+            cmd.Parameters.AddWithValue("@username", username);
+
+            var result = await cmd.ExecuteScalarAsync();
+
+            if (result == DBNull.Value || result == null)
+                return null;
+
+            return Convert.ToDateTime(result);
+        }
+
+
+
+
     }
+
+
 }
 
