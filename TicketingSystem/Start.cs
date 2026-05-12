@@ -580,6 +580,18 @@ namespace Start
             return Convert.ToDateTime(result);
         }
 
+        public async Task UpdateTicketPriority(int ticketId, int priority)
+        {
+            using var conn = new MySqlConnection(GetConnectionString());
+            await conn.OpenAsync();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "CALL update_ticket_priority(@id, @priority)";
+            cmd.Parameters.AddWithValue("@id", ticketId);
+            cmd.Parameters.AddWithValue("@priority", priority);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
 
 
 

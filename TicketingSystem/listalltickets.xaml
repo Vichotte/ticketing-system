@@ -152,7 +152,6 @@
                                     <StackPanel AllowDrop="True"/>
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
-
                         </ListBox>
 
                         <!-- DROP ZONE -->
