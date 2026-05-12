@@ -112,6 +112,21 @@ namespace Start
             }
         }
 
+        public async Task UpdateTicketInfo(int ticketId, string title, string description)
+        {
+            using var conn = new MySqlConnection(GetConnectionString());
+            await conn.OpenAsync();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "CALL update_ticket_info(@id, @title, @desc)";
+            cmd.Parameters.AddWithValue("@id", ticketId);
+            cmd.Parameters.AddWithValue("@title", title);
+            cmd.Parameters.AddWithValue("@desc", description);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+
         public async Task<bool> CreateTicket(string titulo, string descripcion, int openedBy)
         {
             try

@@ -285,9 +285,6 @@ namespace TicketingSystem
             }
         }
 
-
-
-
         private void Card_MouseMove(object sender, MouseEventArgs e)
         {
             if (_isInteractingWithCombo)
