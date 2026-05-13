@@ -95,6 +95,14 @@ namespace TicketingSystem
                     MessageBox.Show("Error al crear el ticket.");
                 }
             };
+
+            btnNotificaciones.Click += (s, e) =>
+            {
+                notifPanel.Visibility =
+                    notifPanel.Visibility == Visibility.Visible
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            };
         }
     }
 

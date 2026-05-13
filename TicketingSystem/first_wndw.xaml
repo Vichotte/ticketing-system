@@ -8,6 +8,11 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
+        <DropShadowEffect x:Key="DropShadow"
+                  Color="Black"
+                  BlurRadius="10"
+                  ShadowDepth="2"
+                  Opacity="0.25"/>
         <Style TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -74,6 +79,19 @@
                                VerticalAlignment="Center"
                                Margin="0,0,15,0"/>
 
+                    <!-- Campana de notificaciones -->
+                    <Button x:Name="btnNotificaciones"
+                    Content="🔔"
+                    Width="50"
+                    Height="50"
+                    FontSize="20"
+                    Foreground="White"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Margin="0,0,15,0"
+                    VerticalAlignment="Center"/>
+                    
                     <!-- Logout -->
                     <Border CornerRadius="20"
                             Background="#FFE63946"
@@ -93,7 +111,6 @@
                 </StackPanel>
             </DockPanel>
         </Border>
-
 
         <!-- ===================== CONTENEDOR CENTRAL ===================== -->
         <Grid Margin="20,80,20,20">
@@ -165,6 +182,31 @@
             </Border>
         </Grid>
 
+        <!-- PANEL DE NOTIFICACIONES -->
+        <Border x:Name="notifPanel"
+        Background="White"
+        CornerRadius="15"
+        BorderBrush="#FFD0D0D0"
+        BorderThickness="1"
+        Padding="15"
+        Width="250"
+        Height="300"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Top"
+        Margin="0,60,20,0"
+        Visibility="Collapsed"
+        Effect="{DynamicResource DropShadow}">
+                <StackPanel>
+                    <TextBlock Text="Notificaciones"
+               FontSize="18"
+               FontWeight="Bold"
+               Foreground="#FF5C5C5C"
+               Margin="0,0,0,10"/>
+                <TextBlock Text="(No hay notificaciones aún)"
+               FontSize="14"
+               Foreground="Gray"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
 

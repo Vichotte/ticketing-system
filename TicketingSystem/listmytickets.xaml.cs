@@ -62,6 +62,14 @@ namespace TicketingSystem
                 }
             };
 
+            btnNotificaciones.Click += (s, e) =>
+            {
+                notifPanel.Visibility =
+                    notifPanel.Visibility == Visibility.Visible
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            };
+
             LoadTickets();
         }
 

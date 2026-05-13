@@ -94,6 +94,15 @@ namespace TicketingSystem
                 this.Hide();
             };
 
+            btnNotificaciones.Click += (s, e) =>
+            {
+                notifPanel.Visibility =
+                    notifPanel.Visibility == Visibility.Visible
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            };
+
+
         }
     }
 }
